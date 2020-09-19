@@ -32,4 +32,4 @@ jobs:
         app-name: 'msalpopupfordynamics'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_be8b7f6bc98d41f2920ed8e3ac3c560a }}
-        package: .
+        package: app
