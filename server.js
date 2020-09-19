@@ -12,7 +12,7 @@ const argv = require('yargs')
     .strict()
     .argv;
 
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 3001;
 
 //initialize express.
 const app = express();

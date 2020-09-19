@@ -3,9 +3,9 @@
 // visit https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
 const msalConfig = {
     auth: {
-        clientId: "Enter_the_Application_Id_Here",
-        authority: "Enter_the_Cloud_Instance_Id_HereEnter_the_Tenant_Info_Here",
-        redirectUri: "Enter_the_Redirect_Uri_Here",
+        clientId: "10ed06ed-8f5f-4e45-abbe-42f6d077b4f4",
+        authority: "https://login.microsoftonline.com/5a98c1cc-eb85-4540-a57b-fc658c02f598",
+        redirectUri: "http://localhost:3001",
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored
