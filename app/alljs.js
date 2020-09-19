@@ -5,7 +5,7 @@ const msalConfig = {
     auth: {
         clientId: "10ed06ed-8f5f-4e45-abbe-42f6d077b4f4",
         authority: "https://login.microsoftonline.com/5a98c1cc-eb85-4540-a57b-fc658c02f598",
-        redirectUri: "https://msalpopupfordynamics.azurewebsites.net",
+        redirectUri: "http://localhost:3001",
     },
     cache: {
         cacheLocation: "localStorage", // This configures where your cache will be stored
@@ -13,7 +13,7 @@ const msalConfig = {
     },
     system: {
         loggerOptions: {
-            loggerCallback: (level, message, containsPii) => {
+            loggerCallback: function(level, message, containsPii){
                 if (containsPii) {	
                     return;	
                 }	
@@ -63,8 +63,8 @@ const profileDiv = document.getElementById("profile-div");
 
 function showWelcomeMessage(account) {
     // Reconfiguring DOM elements
-    cardDiv.style.display = 'initial';
-    welcomeDiv.innerHTML = `Welcome ${account.username}`;
+    cardDiv.style.display = 'block';
+    welcomeDiv.innerHTML = "Welcome " + account.username;
     signInButton.setAttribute("onclick", "signOut();");
     signInButton.setAttribute('class', "btn btn-success")
     signInButton.innerHTML = "Sign Out";
@@ -95,7 +95,7 @@ function updateUI(data, endpoint) {
             tabList.innerHTML = ''; // clear tabList at each readMail call
             const tabContent = document.getElementById("nav-tabContent");
 
-            data.value.map((d, i) => {
+            data.value.map(function(d, i){
                 // Keeping it simple
                 if (i < 10) {
                     const listItem = document.createElement("a");
@@ -133,6 +133,7 @@ function loadPage() {
      * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
      */
     const currentAccounts = myMSALObj.getAllAccounts();
+    console.log("current", currentAccounts);
     if (currentAccounts === null) {
         return;
     } else if (currentAccounts.length > 1) {
@@ -154,7 +155,7 @@ function handleResponse(resp) {
 }
 
 function signIn() {
-    myMSALObj.loginPopup(loginRequest).then(handleResponse).catch(error => {
+    myMSALObj.loginPopup(loginRequest).then(handleResponse).catch(function(error){
         console.error(error);
     });
 }
@@ -174,14 +175,14 @@ function getTokenPopup(request) {
      */
     request.account = myMSALObj.getAccountByUsername(username);
     
-    return myMSALObj.acquireTokenSilent(request).catch(error => {
+    return myMSALObj.acquireTokenSilent(request).catch(function(error) {
         console.warn("silent token acquisition fails. acquiring token using popup");
         if (error instanceof msal.InteractionRequiredAuthError) {
             // fallback to interaction when silent call fails
-            return myMSALObj.acquireTokenPopup(request).then(tokenResponse => {
+            return myMSALObj.acquireTokenPopup(request).then(function(tokenResponse) {
                 console.log(tokenResponse);
                 return tokenResponse;
-            }).catch(error => {
+            }).catch(function(error) {
                 console.error(error);
             });
         } else {
@@ -191,19 +192,19 @@ function getTokenPopup(request) {
 }
 
 function seeProfile() {
-    getTokenPopup(loginRequest).then(response => {
+    getTokenPopup(loginRequest).then(function(response) {
         callMSGraph(graphConfig.graphMeEndpoint, response.accessToken, updateUI);
         profileButton.classList.add('d-none');
         mailButton.classList.remove('d-none');
-    }).catch(error => {
+    }).catch(function(error) {
         console.error(error);
     });
 }
 
 function readMail() {
-    getTokenPopup(tokenRequest).then(response => {
+    getTokenPopup(tokenRequest).then(function(response) {
         callMSGraph(graphConfig.graphMailEndpoint, response.accessToken, updateUI);
-    }).catch(error => {
+    }).catch(function(error) {
         console.error(error);
     });
 }
@@ -214,7 +215,7 @@ loadPage();
 // using authorization bearer token scheme
 function callMSGraph(endpoint, token, callback) {
     const headers = new Headers();
-    const bearer = `Bearer ${token}`;
+    const bearer = "Bearer " + token;
 
     headers.append("Authorization", bearer);
 
@@ -226,7 +227,7 @@ function callMSGraph(endpoint, token, callback) {
     console.log('request made to Graph API at: ' + new Date().toString());
 
     fetch(endpoint, options)
-        .then(response => response.json())
-        .then(response => callback(response, endpoint))
-        .catch(error => console.log(error));
+        .then(function(response){ return response.json()})
+        .then(function(response){ return callback(response, endpoint)})
+        .catch(function (error){ console.log(error)});
 }
