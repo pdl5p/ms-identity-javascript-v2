@@ -5,10 +5,10 @@ const msalConfig = {
     auth: {
         clientId: "10ed06ed-8f5f-4e45-abbe-42f6d077b4f4",
         authority: "https://login.microsoftonline.com/5a98c1cc-eb85-4540-a57b-fc658c02f598",
-        redirectUri: "http://localhost:3001",
+        redirectUri: "https://msalpopupfordynamics.azurewebsites.net",
     },
     cache: {
-        cacheLocation: "localStorage", // This configures where your cache will be stored
+        cacheLocation: "sessionStorage", // This configures where your cache will be stored
         storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
     },
     system: {
