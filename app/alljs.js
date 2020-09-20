@@ -1,11 +1,22 @@
 // Config object to be passed to Msal on creation.
 // For a full list of msal.js configuration parameters, 
 // visit https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
-const msalConfig = {
+
+var userAgent = navigator.userAgent;
+console.log("user agent", userAgent);
+
+var redirurl = window.location.protocol + "//" + window.location.hostname;
+if(window.location.port){
+    redirurl += ":" + window.location.port;
+}
+console.log("redir", redirurl);
+
+var msalConfig = {
     auth: {
-        clientId: "10ed06ed-8f5f-4e45-abbe-42f6d077b4f4",
+        clientId: "38235898-fa02-45d3-a200-f657688ccec2",
         authority: "https://login.microsoftonline.com/5a98c1cc-eb85-4540-a57b-fc658c02f598",
-        redirectUri: "https://msalpopupfordynamics.azurewebsites.net",
+        //redirectUri: "https://msalpopupfordynamics.azurewebsites.net",
+        redirectUri: redirurl,
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored
@@ -37,29 +48,29 @@ const msalConfig = {
 };
 
 // Add here the scopes that you would like the user to consent during sign-in
-const loginRequest = {
+var loginRequest = {
     scopes: ["User.Read"]
 };
 
 // Add here the scopes to request when obtaining an access token for MS Graph API
-const tokenRequest = {
+var tokenRequest = {
     scopes: ["User.Read", "Mail.Read"],
     forceRefresh: false // Set this to "true" to skip a cached token and go to the server to get a new token
 };
 
 // Add here the endpoints for MS Graph API services you would like to use.
-const graphConfig = {
+var graphConfig = {
     graphMeEndpoint: "https://graph.microsoft.com/v1.0/me",
     graphMailEndpoint: "https://graph.microsoft.com/v1.0/me/messages"
 };
 
 // Select DOM elements to work with
-const welcomeDiv = document.getElementById("WelcomeMessage");
-const signInButton = document.getElementById("SignIn");
-const cardDiv = document.getElementById("card-div");
-const mailButton = document.getElementById("readMail");
-const profileButton = document.getElementById("seeProfile");
-const profileDiv = document.getElementById("profile-div");
+var welcomeDiv = document.getElementById("WelcomeMessage");
+var signInButton = document.getElementById("SignIn");
+var cardDiv = document.getElementById("card-div");
+var mailButton = document.getElementById("readMail");
+var profileButton = document.getElementById("seeProfile");
+var profileDiv = document.getElementById("profile-div");
 
 function showWelcomeMessage(account) {
     // Reconfiguring DOM elements
@@ -74,13 +85,13 @@ function updateUI(data, endpoint) {
     console.log('Graph API responded at: ' + new Date().toString());
 
     if (endpoint === graphConfig.graphMeEndpoint) {
-        const title = document.createElement('p');
+        var title = document.createElement('p');
         title.innerHTML = "<strong>Title: </strong>" + data.jobTitle;
-        const email = document.createElement('p');
+        var email = document.createElement('p');
         email.innerHTML = "<strong>Mail: </strong>" + data.mail;
-        const phone = document.createElement('p');
+        var phone = document.createElement('p');
         phone.innerHTML = "<strong>Phone: </strong>" + data.businessPhones[0];
-        const address = document.createElement('p');
+        var address = document.createElement('p');
         address.innerHTML = "<strong>Location: </strong>" + data.officeLocation;
         profileDiv.appendChild(title);
         profileDiv.appendChild(email);
@@ -91,14 +102,14 @@ function updateUI(data, endpoint) {
         if (data.value.length < 1) {
             alert("Your mailbox is empty!")
         } else {
-            const tabList = document.getElementById("list-tab");
+            var tabList = document.getElementById("list-tab");
             tabList.innerHTML = ''; // clear tabList at each readMail call
-            const tabContent = document.getElementById("nav-tabContent");
+            var tabContent = document.getElementById("nav-tabContent");
 
             data.value.map(function(d, i){
                 // Keeping it simple
                 if (i < 10) {
-                    const listItem = document.createElement("a");
+                    var listItem = document.createElement("a");
                     listItem.setAttribute("class", "list-group-item list-group-item-action")
                     listItem.setAttribute("id", "list" + i + "list")
                     listItem.setAttribute("data-toggle", "list")
@@ -108,7 +119,7 @@ function updateUI(data, endpoint) {
                     listItem.innerHTML = d.subject;
                     tabList.appendChild(listItem)
 
-                    const contentItem = document.createElement("div");
+                    var contentItem = document.createElement("div");
                     contentItem.setAttribute("class", "tab-pane fade")
                     contentItem.setAttribute("id", "list" + i)
                     contentItem.setAttribute("role", "tabpanel")
@@ -123,7 +134,7 @@ function updateUI(data, endpoint) {
 
 // Create the main myMSALObj instance
 // configuration parameters are located at authConfig.js
-const myMSALObj = new msal.PublicClientApplication(msalConfig);
+var myMSALObj = new msal.PublicClientApplication(msalConfig);
 
 let username = "";
 
@@ -132,8 +143,8 @@ function loadPage() {
      * See here for more info on account retrieval: 
      * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
      */
-    const currentAccounts = myMSALObj.getAllAccounts();
-    console.log("current", currentAccounts);
+    var currentAccounts = myMSALObj.getAllAccounts();
+    console.log("currentAccounts", currentAccounts);
     if (currentAccounts === null) {
         return;
     } else if (currentAccounts.length > 1) {
@@ -161,7 +172,7 @@ function signIn() {
 }
 
 function signOut() {
-    const logoutRequest = {
+    var logoutRequest = {
         account: myMSALObj.getAccountByUsername(username)
     };
 
@@ -214,12 +225,12 @@ loadPage();
 // Helper function to call MS Graph API endpoint 
 // using authorization bearer token scheme
 function callMSGraph(endpoint, token, callback) {
-    const headers = new Headers();
-    const bearer = "Bearer " + token;
+    var headers = new Headers();
+    var bearer = "Bearer " + token;
 
     headers.append("Authorization", bearer);
 
-    const options = {
+    var options = {
         method: "GET",
         headers: headers
     };
